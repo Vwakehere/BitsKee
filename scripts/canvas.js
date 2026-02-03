@@ -6,11 +6,12 @@
 const DrawingCanvas = {
     container: null,
     grid: null,
-    width: 80,
-    height: 40,
+    width: 20,
+    height: 20,
     currentChar: '@',
     isDrawing: false,
     cells: [],
+    cellWidth: 12,
 
     /**
      * Initialize the drawing canvas.
@@ -29,9 +30,12 @@ const DrawingCanvas = {
         this.container.innerHTML = '';
         this.cells = [];
 
+        // Calculate cell width based on screen size
+        this.cellWidth = window.innerWidth <= 600 ? 14 : 12;
+
         this.grid = document.createElement('div');
         this.grid.className = 'draw-grid';
-        this.grid.style.gridTemplateColumns = `repeat(${this.width}, 12px)`;
+        this.grid.style.gridTemplateColumns = `repeat(${this.width}, ${this.cellWidth}px)`;
 
         for (let y = 0; y < this.height; y++) {
             const row = [];
@@ -52,16 +56,18 @@ const DrawingCanvas = {
 
     /**
      * Add event listeners for drawing.
+     * Uses event delegation on container to survive grid recreation.
      */
     addEventListeners() {
-        this.grid.addEventListener('mousedown', (e) => {
+        // Use event delegation on container - listeners survive grid recreation
+        this.container.addEventListener('mousedown', (e) => {
             if (e.target.classList.contains('draw-cell')) {
                 this.isDrawing = true;
                 this.drawCell(e.target);
             }
         });
 
-        this.grid.addEventListener('mousemove', (e) => {
+        this.container.addEventListener('mousemove', (e) => {
             if (this.isDrawing && e.target.classList.contains('draw-cell')) {
                 this.drawCell(e.target);
             }
@@ -71,29 +77,33 @@ const DrawingCanvas = {
             this.isDrawing = false;
         });
 
-        // Touch support
-        this.grid.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            this.isDrawing = true;
+        // Touch support with passive: false for preventDefault
+        this.container.addEventListener('touchstart', (e) => {
             const touch = e.touches[0];
             const target = document.elementFromPoint(touch.clientX, touch.clientY);
             if (target && target.classList.contains('draw-cell')) {
+                e.preventDefault();
+                this.isDrawing = true;
                 this.drawCell(target);
             }
-        });
+        }, { passive: false });
 
-        this.grid.addEventListener('touchmove', (e) => {
-            e.preventDefault();
+        this.container.addEventListener('touchmove', (e) => {
             if (this.isDrawing) {
                 const touch = e.touches[0];
                 const target = document.elementFromPoint(touch.clientX, touch.clientY);
                 if (target && target.classList.contains('draw-cell')) {
+                    e.preventDefault();
                     this.drawCell(target);
                 }
             }
+        }, { passive: false });
+
+        this.container.addEventListener('touchend', () => {
+            this.isDrawing = false;
         });
 
-        this.grid.addEventListener('touchend', () => {
+        this.container.addEventListener('touchcancel', () => {
             this.isDrawing = false;
         });
     },

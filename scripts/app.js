@@ -250,9 +250,15 @@ const App = {
     },
 
     /**
-     * Initialize the drawing canvas.
+     * Initialize the drawing canvas with appropriate size for screen.
      */
     initDrawCanvas() {
+        // Set mobile-friendly defaults based on screen width
+        const isMobile = window.innerWidth <= 600;
+        this.canvasWidth.value = isMobile ? 20 : 40;
+        this.canvasHeight.value = isMobile ? 15 : 20;
+        DrawingCanvas.width = parseInt(this.canvasWidth.value, 10);
+        DrawingCanvas.height = parseInt(this.canvasHeight.value, 10);
         DrawingCanvas.init(this.drawContainer);
         this.updateKeyboardSelection();
     },
