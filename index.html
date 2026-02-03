@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="BitsKee - A retro-terminal styled pixel art and ASCII drawing tool.">
+    <title>BitsKee | Pixel Art & ASCII</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/crt.css">
+</head>
+
+<body>
+    <div class="crt-overlay"></div>
+    <div class="scanlines"></div>
+
+    <div class="app-container">
+        <header class="terminal-header">
+            <div class="header-left">
+                <span class="logo">[ BITSKEE ]</span>
+            </div>
+            <nav class="header-nav">
+                <button class="nav-btn active" data-mode="pixelate" id="btn-pixelate">
+                    <span class="btn-icon">◫</span> Pixelate
+                </button>
+                <button class="nav-btn" data-mode="draw" id="btn-draw">
+                    <span class="btn-icon">✎</span> Draw
+                </button>
+            </nav>
+        </header>
+
+        <main class="main-content">
+            <!-- Pixelate Mode Panel -->
+            <section class="panel pixelate-panel active" id="panel-pixelate">
+                <div class="upload-zone" id="upload-zone">
+                    <input type="file" id="image-input" accept="image/*" hidden>
+                    <div class="upload-prompt" id="upload-prompt">
+                        <div class="upload-icon">↑</div>
+                        <p>Drop an image here or <span class="upload-link">click to browse</span></p>
+                        <span class="upload-hint">Supports JPG, PNG, GIF, WEBP</span>
+                    </div>
+                    <canvas id="preview-canvas" class="preview-canvas hidden"></canvas>
+                </div>
+
+                <div class="controls-bar">
+                    <div class="control-group">
+                        <label for="pixel-size-slider">Pixel Size</label>
+                        <input type="range" id="pixel-size-slider" min="2" max="32" value="8">
+                        <span id="pixel-size-value">8px</span>
+                    </div>
+                    <div class="control-group">
+                        <label for="color-mode-select">Colors</label>
+                        <select id="color-mode-select">
+                            <option value="full">Full Color</option>
+                            <option value="16">16 Colors</option>
+                            <option value="8">8 Colors</option>
+                            <option value="grayscale">Grayscale</option>
+                            <option value="1bit">1-Bit</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>
+                            <input type="checkbox" id="grid-checkbox"> Grid
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Draw Mode Panel -->
+            <section class="panel draw-panel" id="panel-draw">
+                <div class="draw-toolbar">
+                    <div class="tool-group">
+                        <label for="char-input">Char:</label>
+                        <input type="text" id="char-input" maxlength="1" value="@">
+                    </div>
+                    <div class="tool-group">
+                        <label for="canvas-width">W:</label>
+                        <input type="number" id="canvas-width" value="60" min="10" max="120">
+                    </div>
+                    <div class="tool-group">
+                        <label for="canvas-height">H:</label>
+                        <input type="number" id="canvas-height" value="30" min="5" max="60">
+                    </div>
+                    <button class="action-btn" id="clear-canvas-btn">Clear</button>
+                </div>
+
+                <!-- ASCII Character Keyboard -->
+                <div class="ascii-keyboard" id="ascii-keyboard">
+                    <div class="keyboard-row" data-category="symbols">
+                        <button class="key-btn">@</button>
+                        <button class="key-btn">#</button>
+                        <button class="key-btn">$</button>
+                        <button class="key-btn">%</button>
+                        <button class="key-btn">&</button>
+                        <button class="key-btn">*</button>
+                        <button class="key-btn">+</button>
+                        <button class="key-btn">=</button>
+                        <button class="key-btn">-</button>
+                        <button class="key-btn">~</button>
+                        <button class="key-btn">^</button>
+                        <button class="key-btn">!</button>
+                    </div>
+                    <div class="keyboard-row" data-category="brackets">
+                        <button class="key-btn">(</button>
+                        <button class="key-btn">)</button>
+                        <button class="key-btn">[</button>
+                        <button class="key-btn">]</button>
+                        <button class="key-btn">{</button>
+                        <button class="key-btn">}</button>
+                        <button class="key-btn">
+                            << /button>
+                                <button class="key-btn">></button>
+                                <button class="key-btn">/</button>
+                                <button class="key-btn">\</button>
+                                <button class="key-btn">|</button>
+                                <button class="key-btn">:</button>
+                    </div>
+                    <div class="keyboard-row" data-category="blocks">
+                        <button class="key-btn">█</button>
+                        <button class="key-btn">▓</button>
+                        <button class="key-btn">▒</button>
+                        <button class="key-btn">░</button>
+                        <button class="key-btn">▀</button>
+                        <button class="key-btn">▄</button>
+                        <button class="key-btn">▌</button>
+                        <button class="key-btn">▐</button>
+                        <button class="key-btn">■</button>
+                        <button class="key-btn">□</button>
+                        <button class="key-btn">▪</button>
+                        <button class="key-btn">▫</button>
+                    </div>
+                    <div class="keyboard-row" data-category="lines">
+                        <button class="key-btn">─</button>
+                        <button class="key-btn">│</button>
+                        <button class="key-btn">┌</button>
+                        <button class="key-btn">┐</button>
+                        <button class="key-btn">└</button>
+                        <button class="key-btn">┘</button>
+                        <button class="key-btn">├</button>
+                        <button class="key-btn">┤</button>
+                        <button class="key-btn">┬</button>
+                        <button class="key-btn">┴</button>
+                        <button class="key-btn">┼</button>
+                        <button class="key-btn">•</button>
+                    </div>
+                    <div class="keyboard-row" data-category="misc">
+                        <button class="key-btn">♠</button>
+                        <button class="key-btn">♣</button>
+                        <button class="key-btn">♥</button>
+                        <button class="key-btn">♦</button>
+                        <button class="key-btn">★</button>
+                        <button class="key-btn">☆</button>
+                        <button class="key-btn">○</button>
+                        <button class="key-btn">●</button>
+                        <button class="key-btn">◊</button>
+                        <button class="key-btn">◦</button>
+                        <button class="key-btn">«</button>
+                        <button class="key-btn">»</button>
+                    </div>
+                    <div class="keyboard-row" data-category="erase">
+                        <button class="key-btn key-erase" data-char=" ">⌫ ERASE</button>
+                    </div>
+                </div>
+
+                <div class="draw-grid-container" id="draw-grid-container">
+                    <!-- Draw grid will be generated here -->
+                </div>
+            </section>
+
+            <!-- Output Panel -->
+            <section class="output-panel" id="output-panel">
+                <div class="output-header">
+                    <span class="output-title">&gt; OUTPUT_</span>
+                    <div class="output-actions">
+                        <button class="action-btn" id="copy-btn" title="Copy to Clipboard">
+                            <span>⎘ Copy</span>
+                        </button>
+                        <button class="action-btn" id="download-btn" title="Download">
+                            <span>⤓ Download</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="output-content" id="output-content">
+                    <canvas id="output-canvas" class="output-canvas"></canvas>
+                    <pre class="output-text hidden" id="output-text">
+ ____  _ _       _  __          
+| __ )(_) |_ ___| |/ /___  ___ 
+|  _ \| | __/ __| ' // _ \/ _ \
+| |_) | | |_\__ \ . \  __/  __/
+|____/|_|\__|___/_|\_\___|\___|
+                                
+     [ Awaiting input... ]
+                    </pre>
+                </div>
+            </section>
+        </main>
+
+        <footer class="terminal-footer">
+            <span class="status-text" id="status-text">READY</span>
+            <a href="https://github.com/vwakehere" target="_blank" class="github-link">@vwakehere</a>
+        </footer>
+    </div>
+
+    <script src="scripts/pixelate.js"></script>
+    <script src="scripts/canvas.js"></script>
+    <script src="scripts/app.js"></script>
+</body>
+
+</html>
