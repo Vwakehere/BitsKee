@@ -5,6 +5,9 @@ A retro-terminal styled web app for creating pixel art and ASCII drawings.
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
 
+## Live Demo
+Try the hosted demo: https://vwakehere.github.io/BitsKee/
+
 ## Features
 
 ### 🎨 Pixelate Mode
